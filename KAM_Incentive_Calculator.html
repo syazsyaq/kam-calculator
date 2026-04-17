@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAM Commission Incentive Calculator 2026 · Innoquest</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f4f7fb;
+    --white:     #ffffff;
+    --surface2:  #f0f4fa;
+    --border:    #d8e3f0;
+    --border2:   #c2d3e8;
+    --cyan:      #00AEEF;
+    --cyan-dark: #0099d4;
+    --cyan-pale: #e6f7fd;
+    --navy:      #1A3FA0;
+    --navy-dark: #122e7a;
+    --navy-pale: #eaeef9;
+    --text:      #1a2340;
+    --text2:     #4a5568;
+    --muted:     #8fa3be;
+    --danger:    #e53e3e;
+    --warn:      #e07a00;
+    --green:     #0b8f5a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 6px rgba(26,63,160,0.07);
+  }
+  .logo-mark {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    text-decoration: none;
+  }
+  .logo-mark .inno  { color: var(--cyan); }
+  .logo-mark .quest { color: var(--navy); }
+  .topbar-right {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── Layout ── */
+  .wrapper {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 36px 24px 80px;
+  }
+
+  /* ── Header ── */
+  header { margin-bottom: 36px; animation: fadeUp 0.5s ease both; }
+  .header-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--cyan-dark); background: var(--cyan-pale);
+    border: 1px solid rgba(0,174,239,0.25);
+    padding: 4px 12px; border-radius: 20px;
+  }
+  .badge::before { content:''; width:6px; height:6px; background:var(--cyan); border-radius:50%; }
+  .scheme-tag { font-size:11px; font-weight:600; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+  h1 { font-family:'Nunito',sans-serif; font-size:clamp(24px,4vw,38px); font-weight:800; line-height:1.1; color:var(--navy); letter-spacing:-0.02em; }
+  h1 .accent { color: var(--cyan); }
+  .subtitle { font-size:14px; color:var(--text2); margin-top:8px; font-weight:500; }
+
+  /* ── Section label ── */
+  .section-label {
+    font-family:'Nunito',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:0.14em; text-transform:uppercase; color:var(--muted);
+    margin-bottom:14px; display:flex; align-items:center; gap:10px;
+  }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.45s ease both;
+    box-shadow: 0 2px 8px rgba(26,63,160,0.04);
+  }
+  .card-title {
+    font-family:'Nunito',sans-serif; font-size:12px; font-weight:800;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--navy);
+    margin-bottom:18px; padding-bottom:12px;
+    border-bottom: 2px solid var(--cyan-pale);
+  }
+
+  /* ── Segment rows ── */
+  #segments-container .segment-row {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 130px 1fr 1fr 1fr 1fr 32px;
+    gap: 12px;
+    align-items: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  #segments-container .segment-row:hover { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,174,239,0.1); }
+
+  /* ── Inputs ── */
+  label {
+    display:block; font-family:'Nunito',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:5px;
+  }
+  input[type="number"], input[type="text"], select {
+    width:100%; background:var(--white); border:1.5px solid var(--border);
+    color:var(--text); font-family:'Nunito Sans',sans-serif; font-size:14px; font-weight:600;
+    padding:8px 12px; border-radius:8px; outline:none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input:focus, select:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(0,174,239,0.12); }
+  select option { background: white; }
+
+  .input-wrap { position:relative; }
+  .input-wrap .prefix {
+    position:absolute; left:10px; top:50%; transform:translateY(-50%);
+    font-size:11px; font-weight:700; color:var(--muted); pointer-events:none;
+    font-family:'Nunito',sans-serif;
+  }
+  .input-wrap input { padding-left:30px; }
+
+  .del-btn {
+    background:none; border:1.5px solid var(--border); color:var(--muted);
+    width:30px; height:30px; border-radius:6px; cursor:pointer; font-size:18px;
+    display:flex; align-items:center; justify-content:center; transition:all 0.2s; line-height:1;
+  }
+  .del-btn:hover { border-color:var(--danger); color:var(--danger); background:#fff5f5; }
+
+  .add-seg-btn {
+    font-family:'Nunito',sans-serif; font-size:13px; font-weight:700;
+    padding:9px 18px; border:1.5px dashed var(--border2);
+    background:transparent; color:var(--muted); cursor:pointer;
+    border-radius:8px; transition:all 0.2s; margin-top:6px;
+  }
+  .add-seg-btn:hover { border-color:var(--cyan); color:var(--cyan); background:var(--cyan-pale); }
+
+  /* ── Grid helpers ── */
+  .two-col   { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+
+  /* ── Collection live display ── */
+  #collection-pct-display {
+    margin-top:12px; padding:10px 14px; background:var(--surface2);
+    border-radius:8px; font-family:'Nunito',sans-serif; font-size:13px;
+    font-weight:600; color:var(--text2); border:1px solid var(--border);
+  }
+  #coll-pct-val  { color:var(--navy); font-weight:800; }
+  #coll-mult-val { color:var(--cyan-dark); font-weight:800; }
+
+  /* ── Tier reference ── */
+  .tier-ref { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-top:4px; }
+  .tier-box {
+    background:var(--surface2); border:1px solid var(--border); border-radius:8px;
+    padding:10px 6px; text-align:center; transition:all 0.15s;
+  }
+  .tier-box:hover { border-color:var(--cyan); background:var(--cyan-pale); }
+  .tier-box .t-pct { font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; color:var(--navy); }
+  .tier-box .t-rate { font-size:10px; font-weight:600; color:var(--muted); margin-top:2px; }
+
+  /* ── CTA button ── */
+  .calc-btn {
+    width:100%; padding:16px; background:var(--navy); border:none; color:#fff;
+    font-family:'Nunito',sans-serif; font-size:15px; font-weight:800;
+    letter-spacing:0.06em; text-transform:uppercase; cursor:pointer;
+    border-radius:10px; transition:all 0.2s; margin-top:8px;
+    box-shadow:0 4px 16px rgba(26,63,160,0.22);
+  }
+  .calc-btn:hover { background:var(--navy-dark); transform:translateY(-1px); box-shadow:0 8px 24px rgba(26,63,160,0.28); }
+  .calc-btn:active { transform:translateY(0); }
+
+  /* ── Results ── */
+  #results { display:none; animation:fadeUp 0.5s ease both; }
+
+  .result-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a5fa0 100%);
+    border-radius:14px; padding:36px 32px; text-align:center; margin-bottom:16px;
+    position:relative; overflow:hidden;
+    box-shadow:0 8px 32px rgba(26,63,160,0.22);
+  }
+  .result-hero::before {
+    content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px;
+    background:radial-gradient(circle, rgba(0,174,239,0.2), transparent 65%); border-radius:50%;
+  }
+  .hero-label {
+    font-family:'Nunito',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.55);
+    margin-bottom:10px; position:relative; z-index:1;
+  }
+  .hero-amount {
+    font-family:'Nunito',sans-serif; font-size:clamp(44px,9vw,76px); font-weight:800;
+    color:#fff; letter-spacing:-0.03em; line-height:1; position:relative; z-index:1;
+  }
+  .hero-amount .currency { font-size:0.38em; font-weight:700; color:var(--cyan); vertical-align:super; margin-right:4px; }
+  .hero-sub { font-size:12px; font-weight:600; color:rgba(255,255,255,0.45); margin-top:10px; letter-spacing:0.04em; position:relative; z-index:1; }
+
+  /* ── Stats grid ── */
+  .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+  .stat-box {
+    background:var(--white); border:1px solid var(--border); border-radius:10px;
+    padding:16px 18px; box-shadow:0 1px 4px rgba(26,63,160,0.04);
+  }
+  .stat-box .s-label {
+    font-family:'Nunito',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px;
+  }
+  .stat-box .s-val { font-family:'Nunito',sans-serif; font-size:20px; font-weight:800; color:var(--navy); }
+  .stat-box .s-val.cyan  { color:var(--cyan-dark); }
+  .stat-box .s-val.green { color:var(--green); }
+  .stat-box .s-val.red   { color:var(--danger); }
+
+  /* ── Breakdown table ── */
+  .breakdown-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .breakdown-table th {
+    text-align:left; padding:9px 10px;
+    font-family:'Nunito',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--muted);
+    border-bottom:2px solid var(--border); background:var(--surface2);
+  }
+  .breakdown-table td { padding:11px 10px; border-bottom:1px solid var(--border); vertical-align:middle; font-weight:600; color:var(--text2); }
+  .breakdown-table tr:last-child td { border-bottom:none; }
+  .breakdown-table tr:not(.ineligible):hover td { background:var(--surface2); }
+  .breakdown-table tr.ineligible td { opacity:0.45; }
+  .breakdown-table .no-payout  { color:var(--danger); font-weight:700; }
+  .breakdown-table .has-payout { color:var(--green);  font-weight:700; }
+
+  /* ── Pills ── */
+  .pill { display:inline-block; font-family:'Nunito',sans-serif; font-size:10px; font-weight:700; letter-spacing:0.05em; padding:3px 9px; border-radius:20px; }
+  .pill.green { background:#e6f9f2; color:var(--green); border:1px solid #b7ead5; }
+  .pill.red   { background:#fff0f0; color:var(--danger); border:1px solid #fcc; }
+
+  /* ── Progress bar ── */
+  .prog-bar-bg { height:5px; background:var(--border); border-radius:3px; overflow:hidden; margin-top:5px; }
+  .prog-bar-fill { height:100%; border-radius:3px; transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+  /* ── Note box ── */
+  .note-box {
+    background:var(--navy-pale); border:1px solid rgba(26,63,160,0.18);
+    border-left:4px solid var(--navy); border-radius:8px;
+    padding:14px 16px; font-size:12px; font-weight:500; color:var(--text2); line-height:1.7; margin-top:16px;
+  }
+  .note-box strong { color:var(--navy); font-weight:700; }
+
+  /* ── Reset ── */
+  .reset-btn {
+    font-family:'Nunito',sans-serif; font-size:13px; font-weight:700;
+    padding:11px 20px; border:1.5px solid var(--border2); background:white;
+    color:var(--text2); cursor:pointer; border-radius:8px; transition:all 0.2s;
+    margin-top:16px; display:block; width:100%; text-align:center; letter-spacing:0.04em;
+  }
+  .reset-btn:hover { border-color:var(--navy); color:var(--navy); background:var(--navy-pale); }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  @media (max-width: 680px) {
+    .topbar { padding:0 16px; }
+    #segments-container .segment-row { grid-template-columns:1fr 1fr; }
+    .stats-grid { grid-template-columns:1fr 1fr; }
+    .tier-ref   { grid-template-columns:repeat(3,1fr); }
+    .two-col, .three-col { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <span class="logo-mark">
+    <span class="inno">inno</span><span class="quest">quest</span>
+  </span>
+  <span class="topbar-right">Internal · Commission Tool</span>
+</nav>
+
+<div class="wrapper">
+
+  <header>
+    <div class="header-eyebrow">
+      <span class="badge">2026 Incentive Scheme 1</span>
+      <span class="scheme-tag">Effective Jan – Dec 2026</span>
+    </div>
+    <h1>KAM Commission<br><span class="accent">Incentive Calculator</span></h1>
+    <p class="subtitle">Quarterly · Growth-Based · Segment-Level · For KAM &amp; KAE</p>
+  </header>
+
+  <!-- ═══ FORM ═══ -->
+  <div id="form-section">
+
+    <div class="card" style="animation-delay:0.05s">
+      <div class="section-label">KAM Identity</div>
+      <div class="two-col">
+        <div>
+          <label>KAM Name</label>
+          <input type="text" id="kam-name" placeholder="e.g. Kamna">
+        </div>
+        <div>
+          <label>Commission Quarter</label>
+          <select id="quarter">
+            <option value="Q1 2026">Q1 2026 (Jan – Mar)</option>
+            <option value="Q2 2026" selected>Q2 2026 (Apr – Jun)</option>
+            <option value="Q3 2026">Q3 2026 (Jul – Sep)</option>
+            <option value="Q4 2026">Q4 2026 (Oct – Dec)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="animation-delay:0.1s">
+      <div class="section-label">Segments &amp; Revenue</div>
+      <div id="segments-container"></div>
+      <button class="add-seg-btn" onclick="addSegment()">+ Add Segment</button>
+    </div>
+
+    <div class="card" style="animation-delay:0.15s">
+      <div class="section-label">Collection Performance (Overall)</div>
+      <div class="two-col">
+        <div>
+          <label>Total AR Collected (RM)</label>
+          <div class="input-wrap">
+            <span class="prefix">RM</span>
+            <input type="number" id="ar-collected" placeholder="0" min="0">
+          </div>
+        </div>
+        <div>
+          <label>Total AR Billed (RM)</label>
+          <div class="input-wrap">
+            <span class="prefix">RM</span>
+            <input type="number" id="ar-billed" placeholder="0" min="0">
+          </div>
+        </div>
+      </div>
+      <div id="collection-pct-display">
+        Collection Rate: <span id="coll-pct-val">—</span>
+        &nbsp;·&nbsp; Multiplier: <span id="coll-mult-val">—</span>
+      </div>
+    </div>
+
+    <div class="card" style="animation-delay:0.18s; padding:20px 24px;">
+      <div class="section-label">Payout Rate Reference (% of Net Revenue Achieved)</div>
+      <div class="tier-ref">
+        <div class="tier-box"><div class="t-pct">≥75%</div><div class="t-rate">0.5% of Rev</div></div>
+        <div class="tier-box"><div class="t-pct">≥80%</div><div class="t-rate">0.7% of Rev</div></div>
+        <div class="tier-box"><div class="t-pct">≥85%</div><div class="t-rate">0.8% of Rev</div></div>
+        <div class="tier-box"><div class="t-pct">≥90%</div><div class="t-rate">0.9% of Rev</div></div>
+        <div class="tier-box"><div class="t-pct">≥100%</div><div class="t-rate">1.0% of Rev</div></div>
+        <div class="tier-box"><div class="t-pct">≥105%</div><div class="t-rate">1.1% of Rev</div></div>
+      </div>
+      <div style="margin-top:12px;font-size:11px;font-weight:600;color:var(--muted);line-height:1.8;">
+        Min 75% of growth value required for eligibility &nbsp;·&nbsp;
+        Collection &lt;80% = No payout &nbsp;·&nbsp; 80–84.99% = Pro-rated (×1.0) &nbsp;·&nbsp;
+        85–89.99% = ×1.05 &nbsp;·&nbsp; 90–94.99% = ×1.07 &nbsp;·&nbsp; &gt;95% = ×1.10
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate Incentive Payout →</button>
+  </div>
+
+  <!-- ═══ RESULTS ═══ -->
+  <div id="results">
+
+    <div class="result-hero">
+      <div class="hero-label" id="res-name-label">Total Quarterly Payout</div>
+      <div class="hero-amount"><span class="currency">RM</span><span id="res-total">0</span></div>
+      <div class="hero-sub" id="res-quarter-label">Q2 2026 · Net Revenue Based · Before Tax</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="s-label">Collection Rate</div>
+        <div class="s-val" id="res-coll-pct">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-label">Collection Multiplier</div>
+        <div class="s-val cyan" id="res-coll-mult">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-label">Eligible Segments</div>
+        <div class="s-val green" id="res-seg-count">—</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Segment Breakdown</div>
+      <div style="overflow-x:auto;">
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Segment</th>
+              <th>2025 Base</th>
+              <th>2026 Target</th>
+              <th>Actual</th>
+              <th>Growth Ach.</th>
+              <th>Tier</th>
+              <th>Base Payout</th>
+              <th>After Multiplier</th>
+            </tr>
+          </thead>
+          <tbody id="breakdown-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>Note:</strong> Payout is calculated on net revenue as recognised in BC365 Finance, validated at quarter-end. Collection performance multiplier applies to the combined total payout. Participants must be active full-time employees at the time of payout approval. All figures subject to final management review.
+    </div>
+
+    <button class="reset-btn" onclick="resetForm()">← Recalculate</button>
+  </div>
+
+</div>
+
+<script>
+const SEG_TYPES = ['Clinic', 'Corp', 'Hosp INHO', 'Hosp Ref', 'Other'];
+const DEFAULT_GROWTH = { 'Clinic':15, 'Corp':15, 'Hosp INHO':8, 'Hosp Ref':21, 'Other':15 };
+
+let segments = [], segIdCounter = 0;
+
+function getSegColor(type) {
+  return { 'Clinic':'#00AEEF','Corp':'#1A3FA0','Hosp INHO':'#e07a00','Hosp Ref':'#7c3aed','Other':'#0b8f5a' }[type] || '#8fa3be';
+}
+
+function addSegment(type='Clinic', base='', target='', actual='', growthExp='') {
+  segments.push({ id: segIdCounter++, type, base, target, actual, growthExp });
+  renderSegments();
+}
+
+function removeSegment(id) {
+  segments = segments.filter(s => s.id !== id);
+  renderSegments();
+}
+
+function renderSegments() {
+  const container = document.getElementById('segments-container');
+  if (!segments.length) {
+    container.innerHTML = '<div style="font-size:13px;font-weight:600;color:var(--muted);text-align:center;padding:20px 0;">No segments added. Click below to add one.</div>';
+    return;
+  }
+  container.innerHTML = segments.map(seg => `
+    <div class="segment-row">
+      <div>
+        <label>Segment</label>
+        <select onchange="updateSeg(${seg.id},'type',this.value)">
+          ${SEG_TYPES.map(t=>`<option value="${t}"${seg.type===t?' selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label>2025 Base (RM)</label>
+        <div class="input-wrap">
+          <span class="prefix">RM</span>
+          <input type="number" value="${seg.base}" placeholder="0" min="0" oninput="updateSeg(${seg.id},'base',this.value)">
+        </div>
+      </div>
+      <div>
+        <label>2026 Target (RM)</label>
+        <div class="input-wrap">
+          <span class="prefix">RM</span>
+          <input type="number" value="${seg.target}" placeholder="0" min="0" oninput="updateSeg(${seg.id},'target',this.value)">
+        </div>
+      </div>
+      <div>
+        <label>Actual Net Rev (RM)</label>
+        <div class="input-wrap">
+          <span class="prefix">RM</span>
+          <input type="number" value="${seg.actual}" placeholder="0" min="0" oninput="updateSeg(${seg.id},'actual',this.value)">
+        </div>
+      </div>
+      <div>
+        <label>Growth Exp. (%)</label>
+        <input type="number" value="${seg.growthExp!==''?seg.growthExp:DEFAULT_GROWTH[seg.type]||15}"
+          placeholder="${DEFAULT_GROWTH[seg.type]||15}" min="0" step="0.1"
+          oninput="updateSeg(${seg.id},'growthExp',this.value)">
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:1px;">
+        <button class="del-btn" onclick="removeSegment(${seg.id})" title="Remove">×</button>
+      </div>
+    </div>`).join('');
+}
+
+function updateSeg(id, field, value) {
+  const s = segments.find(s=>s.id===id);
+  if (s) {
+    s[field] = value;
+    if (field==='type' && s.growthExp==='') s.growthExp = DEFAULT_GROWTH[value]||15;
+  }
+}
+
+function collMultNum(r)   { if(r<80) return 0; if(r<85) return 1.0; if(r<90) return 1.05; if(r<95) return 1.07; return 1.10; }
+function collMultLabel(r) { if(r<80) return 'No Payout'; if(r<85) return 'Pro-Rated (×1.0)'; if(r<90) return '×1.05'; if(r<95) return '×1.07'; return '×1.10'; }
+function payoutRate(g)    { if(g<75) return 0; if(g<80) return 0.5; if(g<85) return 0.7; if(g<90) return 0.8; if(g<100) return 0.9; if(g<105) return 1.0; return 1.1; }
+function tierLabel(g)     { if(g<75) return '<75%'; if(g<80) return '≥75%'; if(g<85) return '≥80%'; if(g<90) return '≥85%'; if(g<100) return '≥90%'; if(g<105) return '≥100%'; return '≥105%'; }
+function fmt(n)           { return Number(n).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+document.getElementById('ar-collected').addEventListener('input', liveCollUpdate);
+document.getElementById('ar-billed').addEventListener('input', liveCollUpdate);
+
+function liveCollUpdate() {
+  const c = parseFloat(document.getElementById('ar-collected').value)||0;
+  const b = parseFloat(document.getElementById('ar-billed').value)||0;
+  if (b>0) {
+    const r = (c/b)*100;
+    document.getElementById('coll-pct-val').textContent = r.toFixed(1)+'%';
+    document.getElementById('coll-mult-val').textContent = collMultLabel(r);
+  } else {
+    document.getElementById('coll-pct-val').textContent = '—';
+    document.getElementById('coll-mult-val').textContent = '—';
+  }
+}
+
+function calculate() {
+  if (!segments.length) { alert('Please add at least one segment.'); return; }
+
+  const arC = parseFloat(document.getElementById('ar-collected').value)||0;
+  const arB = parseFloat(document.getElementById('ar-billed').value)||0;
+  const cRate = arB>0 ? (arC/arB)*100 : 0;
+  const cMult = collMultNum(cRate);
+  const cLabel = collMultLabel(cRate);
+
+  let totalBase=0, eligible=0;
+  const rows = segments.map(seg => {
+    const base   = parseFloat(seg.base)||0;
+    const target = parseFloat(seg.target)||0;
+    const actual = parseFloat(seg.actual)||0;
+    const gVal   = target - base;
+    const gAch   = gVal>0 ? ((actual-base)/gVal)*100 : 0;
+    const pRate  = payoutRate(gAch);
+    const bPay   = (pRate/100)*actual;
+    const ok     = pRate>0 && cMult>0;
+    if (ok) { totalBase+=bPay; eligible++; }
+    return { seg, base, target, actual, gAch, pRate, tier:tierLabel(gAch), bPay, ok };
+  });
+
+  const total = totalBase * cMult;
+  const name  = document.getElementById('kam-name').value.trim()||'KAM';
+  const qtr   = document.getElementById('quarter').value;
+
+  document.getElementById('res-name-label').textContent  = `${name} · Quarterly Payout`;
+  document.getElementById('res-total').textContent       = fmt(total);
+  document.getElementById('res-quarter-label').textContent = `${qtr} · Net Revenue Based · Before Tax`;
+
+  const cpEl = document.getElementById('res-coll-pct');
+  cpEl.textContent = arB>0 ? cRate.toFixed(1)+'%' : 'N/A';
+  cpEl.className = 's-val '+(cRate>=90?'green':cRate>=80?'cyan':'red');
+
+  document.getElementById('res-coll-mult').textContent = cLabel;
+  document.getElementById('res-seg-count').textContent = `${eligible} / ${segments.length}`;
+
+  document.getElementById('breakdown-body').innerHTML = rows.map(r => {
+    const after = r.ok ? r.bPay*cMult : 0;
+    const sc = getSegColor(r.seg.type);
+    return `
+      <tr class="${r.ok?'':'ineligible'}">
+        <td><span class="pill" style="background:${sc}18;color:${sc};border:1px solid ${sc}40">${r.seg.type}</span></td>
+        <td>RM ${fmt(r.base)}</td>
+        <td>RM ${fmt(r.target)}</td>
+        <td>RM ${fmt(r.actual)}</td>
+        <td>
+          <div style="font-size:13px;font-weight:700;color:${r.gAch>=75?'var(--green)':'var(--danger)'}">${r.gAch.toFixed(1)}%</div>
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${Math.min(r.gAch,120)}%;background:${r.gAch>=75?'var(--cyan)':'var(--danger)'}"></div></div>
+        </td>
+        <td><span class="pill ${r.pRate>0?'green':'red'}">${r.tier}</span></td>
+        <td class="${r.ok?'has-payout':'no-payout'}">RM ${fmt(r.bPay)}<br><span style="font-size:10px;font-weight:600;color:var(--muted)">${r.pRate}% of rev</span></td>
+        <td style="font-weight:700;color:${after>0?'var(--navy)':'var(--danger)'}">RM ${fmt(after)}</td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function resetForm() {
+  document.getElementById('form-section').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+addSegment('Clinic', 300000, 345000, '', 15);
+addSegment('Corp',   120000, 138000, '', 15);
+</script>
+</body>
+</html>
